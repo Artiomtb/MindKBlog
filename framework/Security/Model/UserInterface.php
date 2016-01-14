@@ -4,6 +4,6 @@
 namespace Framework\Security\Model;
 
 
-class UserInterface
+interface UserInterface
 {
 }
