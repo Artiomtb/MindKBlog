@@ -4,7 +4,7 @@
 namespace Framework\Model;
 
 
-class ActiveRecord
+abstract class ActiveRecord
 {
 
     public static function find($param) {
@@ -14,4 +14,6 @@ class ActiveRecord
     public function save()
     {
     }
+
+    public abstract static function getTable();
 }
