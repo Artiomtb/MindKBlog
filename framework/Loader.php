@@ -12,6 +12,7 @@ class Loader
     {
         if (!self::$frameworkClassesRegistered) {
             self::register_classes(FRAMEWORK_NAMESPACE_NAME, FRAMEWORK_PATH);
+            self::$frameworkClassesRegistered = true;
         }
         self::register_classes($namespaceName, $namespacePath);
     }
