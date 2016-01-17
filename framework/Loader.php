@@ -1,34 +1,27 @@
 <?php
 
 const FRAMEWORK_NAMESPACE_NAME = "Framework\\";
+const FRAMEWORK_PATH = "\\..\\framework";
+
 class Loader
 {
 
-    private static $namespacePath;
-    private static $namespaceName;
     private static $frameworkClassesRegistered = false;
 
     public static function addNamespacePath($namespaceName, $namespacePath)
     {
         if (!self::$frameworkClassesRegistered) {
-            self::registerFrameworkPath();
+            self::register_classes(FRAMEWORK_NAMESPACE_NAME, FRAMEWORK_PATH);
         }
-        self::$namespacePath = $namespacePath;
-        self::$namespaceName = $namespaceName;
-        spl_autoload_register(function ($className) {
-            if (strrpos($className, self::$namespaceName) === 0) {
-                include_once(Loader::$namespacePath . substr($className, strpos($className, "\\")) . '.php');
-            }
-        });
+        self::register_classes($namespaceName, $namespacePath);
     }
 
-    private static function registerFrameworkPath()
+    private static function register_classes($namespaceName, $namespacePath)
     {
-        spl_autoload_register(function ($className) {
-            if (strrpos($className, FRAMEWORK_NAMESPACE_NAME) === 0) {
-                include_once(substr($className, strpos(FRAMEWORK_NAMESPACE_NAME, "\\")) . '.php');;
+        spl_autoload_register(function ($className) use ($namespaceName, $namespacePath) {
+            if (strrpos($className, $namespaceName) === 0) {
+                include_once($namespacePath . substr($className, strpos($namespaceName, "\\")) . ".php");;
             }
         });
-        self::$frameworkClassesRegistered = true;
     }
 }
