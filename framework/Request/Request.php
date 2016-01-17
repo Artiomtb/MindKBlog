@@ -21,9 +21,6 @@ class Request
 
     public static function create()
     {
-        print_r($_SERVER);
-        print_r($_GET);
-        print_r($_POST);
         return new Request($_SERVER["REQUEST_METHOD"], $_SERVER["REQUEST_URI"], $_POST, $_GET);
     }
 
