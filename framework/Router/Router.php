@@ -22,6 +22,11 @@ class Router
     {
         $uri = $request->getUri();
 
+        $getParamsPos = strpos($uri, "?");
+        if ($getParamsPos != false) {
+            $uri = substr($uri, 0, $getParamsPos);
+        }
+
         if (!$this->isEndsWithSlash($uri)) {
             $uri = $uri . "/";
         };
