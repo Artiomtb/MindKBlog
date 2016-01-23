@@ -1,23 +1,29 @@
 <?php
 
+Loader::getInstance();
 
 class Loader
 {
     const FRAMEWORK_NAMESPACE_NAME = "Framework\\";
     const FRAMEWORK_PATH = "\\..\\framework";
 
-    private static $frameworkClassesRegistered = false;
+    private static $instance;
 
-    public static function addNamespacePath($namespaceName, $namespacePath)
+    private function __construct()
     {
-        if (!self::$frameworkClassesRegistered) {
-            self::register_classes(self::FRAMEWORK_NAMESPACE_NAME, self::FRAMEWORK_PATH);
-            self::$frameworkClassesRegistered = true;
-        }
-        self::register_classes($namespaceName, $namespacePath);
+        self::addNamespacePath(self::FRAMEWORK_NAMESPACE_NAME, self::FRAMEWORK_PATH);
     }
 
-    private static function register_classes($namespaceName, $namespacePath)
+    public static function getInstance()
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new Loader();
+        }
+        return self::$instance;
+    }
+
+
+    public static function addNamespacePath($namespaceName, $namespacePath)
     {
         spl_autoload_register(function ($className) use ($namespaceName, $namespacePath) {
             if (strrpos($className, $namespaceName) === 0) {
