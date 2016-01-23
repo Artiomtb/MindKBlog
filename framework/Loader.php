@@ -1,17 +1,17 @@
 <?php
 
-const FRAMEWORK_NAMESPACE_NAME = "Framework\\";
-const FRAMEWORK_PATH = "\\..\\framework";
 
 class Loader
 {
+    const FRAMEWORK_NAMESPACE_NAME = "Framework\\";
+    const FRAMEWORK_PATH = "\\..\\framework";
 
     private static $frameworkClassesRegistered = false;
 
     public static function addNamespacePath($namespaceName, $namespacePath)
     {
         if (!self::$frameworkClassesRegistered) {
-            self::register_classes(FRAMEWORK_NAMESPACE_NAME, FRAMEWORK_PATH);
+            self::register_classes(self::FRAMEWORK_NAMESPACE_NAME, self::FRAMEWORK_PATH);
             self::$frameworkClassesRegistered = true;
         }
         self::register_classes($namespaceName, $namespacePath);
