@@ -7,6 +7,7 @@ class Router
 {
 
     private $config_array;
+    private $request;
 
     public function __construct($config_array)
     {
@@ -20,6 +21,7 @@ class Router
 
     public function route($request)
     {
+        $this->request = $request;
         $uri = $request->getUri();
 
         $getParamsPos = strpos($uri, "?");
@@ -99,8 +101,11 @@ class Router
         $requirements = $matched_config["_requirements"];
         if (!is_null($requirements)) {
             foreach ($requirements as $reqName => $recValue) {
-                if ($reqName === "method") {
-                    echo "Checking method";
+                if ($reqName === "_method") {
+                    if (strcmp($this->request->method, $recValue) != 0) {
+                        return false;
+                    }
+
                 } elseif (!is_null($uri_variables[$reqName])) {
                     preg_match("/^" . $recValue . "$/", $uri_variables[$reqName], $output_array);
                     if (sizeof($output_array) == 0) {
