@@ -103,7 +103,8 @@ class Router
             foreach ($requirements as $reqName => $recValue) {
                 if ($reqName === "_method") {
                     if (strcmp($this->request->method, $recValue) != 0) {
-                        return false;
+                        $result = false;
+                        break;
                     }
 
                 } elseif (!is_null($uri_variables[$reqName])) {
