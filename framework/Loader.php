@@ -14,17 +14,23 @@ class Loader
 
     private function __construct()
     {
+
+        //добавим классы, которые обязательно будут загружены
+        include_once "Application.php";
+        include_once "Router/Router.php";
+        include_once "Request/Request.php";
+        include_once "Response/Response.php";
+
         //зарегистрируем классы фреймворка
         self::addNamespacePath(self::FRAMEWORK_NAMESPACE_NAME, self::FRAMEWORK_PATH);
 
         //регистрируем функцию для поиска классов
         spl_autoload_register(function ($className) {
-            foreach (self::$namespaces as $namespaceName => $namespacePath) {
-                $path = $namespacePath . DIRECTORY_SEPARATOR . str_replace("\\", DIRECTORY_SEPARATOR, str_replace($namespaceName, "", $className)) . ".php";
-                if (file_exists($path)) {
-                    include_once($path);
-                    break;
-                }
+            $namespaceName = strtok($className, "\\");
+            $namespacePath = self::$namespaces[$namespaceName . "\\"];
+            $path = str_replace("\\", DIRECTORY_SEPARATOR, $namespacePath . str_replace($namespaceName, "", $className)) . ".php";
+            if (file_exists($path)) {
+                include_once($path);
             }
         });
     }
@@ -53,6 +59,7 @@ class Loader
     public static function addNamespacePath($namespaceName, $namespacePath)
     {
         self::$namespaces[$namespaceName] = $namespacePath;
+        print_r(self::$namespaces);
     }
 
     /**
