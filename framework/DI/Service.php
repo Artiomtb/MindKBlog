@@ -2,6 +2,10 @@
 
 namespace Framework\DI;
 
+/**
+ * Class Service, реализация Dependency Injection
+ * @package Framework\DI
+ */
 class Service
 {
     private static $services = array();
