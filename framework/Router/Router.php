@@ -11,7 +11,7 @@ class Router
 
     /**
      * Конструктор, принимает на вход конфиг роутера
-     * @param $config_array ассоциативный массив с роутами
+     * @param $config_array array ассоциативный массив с роутами
      */
     public function __construct($config_array)
     {
@@ -26,8 +26,9 @@ class Router
     }
 
     /**
-     * Метод, перенаправляющий request на нужный контроллер
-     * @param $request реквест
+     * Метод, возвращающий подходящий маршрут для реквеста и его параметры
+     * @param $request Request реквест
+     * @return null|array
      */
     public function route($request)
     {
@@ -65,31 +66,16 @@ class Router
             }
         }
 
-        //если подхордящий роут не найден
-        if (is_null($matched_config)) {
-            echo "Not found such route";
-            //TODO имплементировать логику обработки не найденного маршрута
-        } //роут найден, обработать
-        else {
-            echo "Founded !";
-            print_r_mine($matched_config);
-            $controller_name = $matched_config["controller"];
-            $method_name = $matched_config["action"] . "Action";
-            echo $controller_name . "->" . $method_name;
-            $controller = new $controller_name();
-            if (sizeof($uri_variables) == 0) {
-//                $controller->$method_name();
-                //TODO call methods without args
-            } else {
-                //TODO call methods with args
-            }
-        }
+        //формируем результат работы роутера
+        $result = array("route" => $matched_config,
+            "params" => $uri_variables);
+        return $result;
     }
 
     /**
      * Проверяет, соответствует ли uri паттерну
-     * @param $parsedUri разложенный в массив uri
-     * @param $parsedPattern разложенный в массив паттерн
+     * @param $parsedUri array разложенный в массив uri
+     * @param $parsedPattern array разложенный в массив паттерн
      * @return array|null вернет null, если паттерн не соответствует uri, или ассоциативный массив в формате переменная => значение, если uri соотвествует паттерну
      */
     private function checkAndGetVariables($parsedUri, $parsedPattern)
@@ -118,7 +104,7 @@ class Router
 
     /**
      * Проверяет, является ли текущая строка переменной в формате {name}
-     * @param $curPattern строка для проверки
+     * @param $curPattern string строка для проверки
      * @return bool true, если в строка - переменная в формате {name}
      */
     private function isVariable($curPattern)
@@ -129,7 +115,7 @@ class Router
 
     /**
      * Метод проверяет, заканчивается ли строка символом "/"
-     * @param $string строка для проверки
+     * @param $string string строка для проверки
      * @return bool true, если строка заканчивается на "/"
      */
     private function isEndsWithSlash($string)
@@ -139,8 +125,8 @@ class Router
 
     /**
      * Проверяет соблюдение _requirements конкретного конфига для uri
-     * @param $matched_config конфиг роута
-     * @param $uri_variables проверяемый uri
+     * @param $matched_config array конфиг роута
+     * @param $uri_variables string проверяемый uri
      * @return bool true, если условия соблюдаются
      */
     private function checkRequirements($matched_config, $uri_variables)
