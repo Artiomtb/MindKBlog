@@ -3,5 +3,5 @@ Options -Indexes
     RewriteEngine On
 
     RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^(.*)$ test.php [QSA,L]
+    RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
