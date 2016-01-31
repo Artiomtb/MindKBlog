@@ -59,7 +59,6 @@ class Loader
     public static function addNamespacePath($namespaceName, $namespacePath)
     {
         self::$namespaces[$namespaceName] = $namespacePath;
-        print_r(self::$namespaces);
     }
 
     /**

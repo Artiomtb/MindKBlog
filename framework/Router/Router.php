@@ -113,6 +113,7 @@ class Router
         return sizeof($output_array) > 0;
     }
 
+    //TODO удалить этот метод
     /**
      * Метод проверяет, заканчивается ли строка символом "/"
      * @param $string string строка для проверки
