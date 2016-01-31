@@ -35,10 +35,7 @@ class Router
         $uri = $request->getUri();
 
         //отрежем параметры от uri, если они есть
-        $getParamsPos = strpos($uri, "?");
-        if ($getParamsPos != false) {
-            $uri = substr($uri, 0, $getParamsPos);
-        }
+        $uri = strtok($uri, "?");
 
         //добавить слеш в конец, если его там нет
         if (!$this->isEndsWithSlash($uri)) {
