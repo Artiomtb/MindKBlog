@@ -7,7 +7,7 @@ class Loader
 {
     //namespace и путь к классам framework
     const FRAMEWORK_NAMESPACE_NAME = "Framework\\";
-    const FRAMEWORK_PATH = __DIR__ . "\\..\\framework";
+    const FRAMEWORK_PATH = __DIR__;
 
     private static $instance;
     private static $namespaces;
