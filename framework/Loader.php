@@ -32,6 +32,9 @@ class Loader
         return self::$instance;
     }
 
+    private function __clone()
+    {
+    }
 
     public static function addNamespacePath($namespaceName, $namespacePath)
     {
