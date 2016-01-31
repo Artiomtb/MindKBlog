@@ -37,4 +37,9 @@ class Loader
     {
         self::$namespaces[$namespaceName] = $namespacePath;
     }
+
+    public static function getNamespaces()
+    {
+        return self::$namespaces;
+    }
 }
