@@ -19,7 +19,7 @@ class Service
     /**
      * Метод для регистрации сервиса по имени
      * @param $serviceName имя сервиса
-     * @param $serviceClass класс сервиса
+     * @param $serviceClass объект
      */
     public static function set($serviceName, $serviceClass)
     {
@@ -28,7 +28,7 @@ class Service
 
     /**
      * Метод для множественной регистрации сервисов по имени
-     * @param array $services ассоциативный массив в формате имя сервиса => класс сервиса (с namespace)
+     * @param array $services ассоциативный массив в формате имя сервиса => объект
      */
     public static function setAll(array $services)
     {
