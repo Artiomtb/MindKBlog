@@ -47,7 +47,7 @@ class Loader
 
     /**
      * Сообщает автолоадеру, по какому пути искать классы с указанным namespace
-     * @param $namespaceName namespace класса, с "/" в конце
+     * @param $namespaceName namespace класса, с "\" в конце
      * @param $namespacePath полный путь к директории, где лежат классы
      */
     public static function addNamespacePath($namespaceName, $namespacePath)
