@@ -14,7 +14,7 @@ class Controller
 
     public function getRequest()
     {
-        return new Request();
+        return "";
     }
 
 
