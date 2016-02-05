@@ -15,6 +15,7 @@ use Framework\Exception\DatabaseException;
 use Framework\Exception\HttpNotFoundException;
 use Framework\Request\Request;
 use Framework\Response\Response;
+use Framework\Response\ResponseType;
 use Framework\Validation\Validator;
 
 class PostController extends Controller
@@ -22,7 +23,8 @@ class PostController extends Controller
 
     public function indexAction()
     {
-        return $this->render('index.html', array('posts' => Post::find('all')));
+//        return $this->render('index.html', array('posts' => Post::find('all')));
+        return new Response("index");
     }
 
     public function getPostAction($id)
@@ -63,6 +65,7 @@ class PostController extends Controller
         if (!$post = Post::find((int)$id)) {
             throw new HttpNotFoundException('Page Not Found!');
         }
-        return $this->render('show.html', array('post' => $post));
+        return new Response("Show me $id post!", ResponseType::OK);
+//        return $this->render('show.html', array('post' => $post));
     }
 }

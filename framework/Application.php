@@ -3,6 +3,7 @@
 
 namespace Framework;
 
+use Framework\DI\Service;
 use Framework\Request\Request;
 use Framework\Response\Response;
 use Framework\Response\ResponseType;
@@ -20,6 +21,8 @@ class Application
     public function __construct($config_path)
     {
         $this->config = include_once $config_path;
+        Service::setAll($this->config["di"]);
+
         //TODO добавить обработку остальных параметров конфига, когда понядобятся
     }
 

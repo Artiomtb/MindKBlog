@@ -3,6 +3,7 @@
 return array(
     'mode'        => 'dev',
     'routes'      => include('routes.php'),
+    'di'          => include ('di.php'),
     'main_layout' => __DIR__.'/../../src/Blog/views/layout.html.php',
     'error_500'   => __DIR__.'/../../src/Blog/views/500.html.php',
     'pdo'         => array(
