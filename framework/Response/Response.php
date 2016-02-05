@@ -27,6 +27,11 @@ class Response
         $this->content_type = $content_type;
     }
 
+    public function addHeader($header_name, $header_value)
+    {
+        header($header_name . ": " . $header_value);
+    }
+
     /**
      * Отправляет текущий респонс (является комбинацией sendHeaders() и sendContent())
      */
