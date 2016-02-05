@@ -7,7 +7,8 @@ namespace Framework\Model;
 abstract class ActiveRecord
 {
 
-    public static function find($param) {
+    public static function find($param)
+    {
         return true;
     }
 
@@ -15,5 +16,7 @@ abstract class ActiveRecord
     {
     }
 
-    public abstract static function getTable();
+    public static function getTable()
+    {
+    }
 }
