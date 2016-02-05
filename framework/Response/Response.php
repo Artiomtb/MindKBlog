@@ -27,7 +27,12 @@ class Response
         $this->content_type = $content_type;
     }
 
-    public function addHeader($header_name, $header_value)
+    /**
+     * Функция отправлет header parameters в текущий респонс
+     * @param string $header_name ключ header параметра
+     * @param string $header_value значение header параметра
+     */
+    public function sendHeader($header_name, $header_value)
     {
         header($header_name . ": " . $header_value);
     }
@@ -47,7 +52,7 @@ class Response
     public function sendHeaders()
     {
         header("HTTP/1.1 " . $this->response_code);
-        header("Content-Type: " . $this->content_type);
+        $this->sendHeader("Content-Type", $this->content_type);
     }
 
     /**

@@ -18,6 +18,6 @@ class ResponseRedirect extends Response
     public function __construct($route, $message = "")
     {
         $route = ($message == "") ? $route : $route . "?redirectmessage=" . $message;
-        parent::addHeader("Location", $route);
+        parent::sendHeader("Location", $route);
     }
 }
