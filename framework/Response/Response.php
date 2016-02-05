@@ -28,7 +28,7 @@ class Response
     }
 
     /**
-     * Отправляет текущий респонс (является комбинацией sendHeaders() и sendContent()
+     * Отправляет текущий респонс (является комбинацией sendHeaders() и sendContent())
      */
     public function send()
     {
