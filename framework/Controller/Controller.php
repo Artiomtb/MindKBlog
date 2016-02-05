@@ -3,6 +3,7 @@
 namespace Framework\Controller;
 
 use Framework\Request\Request;
+use Framework\Response\ResponseRedirect;
 
 class Controller
 {
@@ -30,9 +31,15 @@ class Controller
     }
 
 
+    /**
+     * Метод выполняет редирект по заданному адресу с заданным сообщением
+     * @param string $route uri для редиректа
+     * @param string $message сообщение редиректа (будет отправлено как GET параметр с key = redirectmessage)
+     * @return ResponseRedirect респонс-редирект на заданный uri с заданным сообщением
+     */
     public function redirect($route, $message = "")
     {
-        return ""; //выдать респонс
+        return new ResponseRedirect($route, $message);
     }
 
 
