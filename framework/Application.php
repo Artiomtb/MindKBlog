@@ -41,6 +41,14 @@ class Application
             if (class_exists($controller_class) && method_exists($controller_class, $method_name)) {
                 $request_params = $route_answer["params"];
                 $response = $this->getResponseFromController($controller_class, $method_name, $request_params);
+
+//                TODO добавить оборачивание респонса в шаблон
+//                if("text/html" === $response->getContentType()) {
+//                    $content = $response->getContent();
+//                    $response = new Response( include (__DIR__.'/../../src/Blog/views/500.html.php'));
+//                }
+//                $response->setContent($response->getContent())
+
             } else {
                 $response = new Response("Such controller and method does not exists: " . "$controller_class -> $method_name()", ResponseType::NOT_FOUND);
             }
@@ -58,9 +66,19 @@ class Application
     {
         $controller = new $controller_name();
         if (!empty($params)) {
+            //TODO добавить биндинг переменных по имени
             return call_user_func_array(array($controller, $method_name), $params);
         } else {
             return $controller->{$method_name}();
         }
+    }
+
+    /**
+     * Возвращает конфиг текущего приложения
+     * @return array конфиг текущего приложения в виде ассоциативного массива
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 }
