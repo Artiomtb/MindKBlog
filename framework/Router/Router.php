@@ -3,6 +3,8 @@
 
 namespace Framework\Router;
 
+use Framework\Request\Request;
+
 class Router
 {
 
@@ -139,7 +141,7 @@ class Router
 
                 //если есть ограничение по методу
                 if ($reqName === "_method") {
-                    if (strcmp($this->request->method, $recValue) != 0) {
+                    if (strcmp($this->request->getMethod(), $recValue) != 0) {
                         $result = false;
                         break;
                     }
