@@ -1,10 +1,10 @@
 <?php
 
-namespace framework\Response;
+namespace Framework\Response;
 
 /**
  * Class ResponseType абстрактный класс хранящий константы HTTP ответов сервера
- * * @package framework\Response
+ * @package framework\Response
  */
 abstract class ResponseType
 {

@@ -5,7 +5,7 @@ namespace Framework;
 
 use Framework\Request\Request;
 use Framework\Response\Response;
-use framework\Response\ResponseType;
+use Framework\Response\ResponseType;
 use Framework\Router\Router;
 
 class Application
