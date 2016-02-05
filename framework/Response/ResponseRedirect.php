@@ -19,5 +19,6 @@ class ResponseRedirect extends Response
     {
         $route = ($message == "") ? $route : $route . "?redirectmessage=" . $message;
         parent::sendHeader("Location", $route);
+        exit;
     }
 }
