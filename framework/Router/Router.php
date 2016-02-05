@@ -156,4 +156,23 @@ class Router
         }
         return $result;
     }
+
+    /**
+     * Возвращает путь по заданному имени роута и параметрам
+     * @param string $route_name имя роута как в конфиге
+     * @param array $params необязательный параметр - ассоциативный массив в формате имя переменной => значение
+     * @return string uri согласно паттерну заданного роута с учетом значений параметров. Если роут не найден - вернется значение /
+     */
+    public function generateRoute($route_name, $params = array())
+    {
+        $result = "/";
+        if (array_key_exists($route_name, $this->config_array)) {
+            $route_uri = $this->config_array[$route_name]["pattern"];
+            foreach ($params as $param_name => $param_value) {
+                $route_uri = str_replace("{" . $param_name . "}", $param_value, $route_uri);
+            }
+            $result = $route_uri;
+        }
+        return $result;
+    }
 }
