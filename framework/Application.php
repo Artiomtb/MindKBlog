@@ -5,6 +5,7 @@ namespace Framework;
 
 use Framework\Request\Request;
 use Framework\Response\Response;
+use framework\Response\ResponseType;
 use Framework\Router\Router;
 
 class Application
@@ -33,7 +34,7 @@ class Application
 
         //если роут не найден по данному uri
         if (empty($route)) {
-            $response = new Response("Route not found", 404);
+            $response = new Response("Route not found", ResponseType::NOT_FOUND);
         } else {
             $controller_class = $route["controller"];
             $method_name = $route["action"] . "Action";
@@ -41,7 +42,7 @@ class Application
                 $request_params = $route_answer["params"];
                 $response = $this->getResponseFromController($controller_class, $method_name, $request_params);
             } else {
-                $response = new Response("Such controller and method does not exists: " . "$controller_class -> $method_name()<br/>");
+                $response = new Response("Such controller and method does not exists: " . "$controller_class -> $method_name()", ResponseType::NOT_FOUND);
             }
         }
         $response->send();
