@@ -9,11 +9,6 @@ namespace Framework\Request;
 class Request
 {
 
-    public $method;
-    public $uri;
-    public $post;
-    public $get;
-
     //TODO добавить фильтрацию переменных
 
     /**
@@ -69,5 +64,9 @@ class Request
     public function getUri()
     {
         return $_SERVER["REQUEST_URI"];
+    }
+
+    public function getMethod() {
+        return $_SERVER["REQUEST_METHOD"];
     }
 }
