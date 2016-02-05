@@ -21,8 +21,10 @@ class Application
      */
     public function __construct($config_path)
     {
-        $this->config = include_once $config_path;
-        Service::setAll($this->config["di"]);
+        $config = include_once $config_path;
+        $this->setErrorReportingLevel($config["mode"]);
+        Service::setAll($config["di"]);
+        $this->config = $config;
 
         //TODO добавить обработку остальных параметров конфига, когда понядобятся
     }
@@ -85,5 +87,20 @@ class Application
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * Устанавливает уровень вывода ошибок в зависимости от типа среды, на которой запущено приложение
+     * @param string $mode если = prod, отключается запись всех ошибок, если dev - максимальная запись. Иначе - ошибки и предупреждения
+     */
+    private function setErrorReportingLevel($mode)
+    {
+        if ("prod" == $mode) {
+            error_reporting(0);
+        } elseif ("dev" == $mode) {
+            error_reporting(E_ALL);
+        } else {
+            error_reporting(E_ERROR | E_WARNING | E_PARSE);
+        }
     }
 }
