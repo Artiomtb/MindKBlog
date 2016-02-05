@@ -135,9 +135,8 @@ class Router
     private function checkRequirements($matched_config, $uri_variables)
     {
         $result = true;
-        $requirements = $matched_config["_requirements"];
-        if (!is_null($requirements)) {
-            foreach ($requirements as $reqName => $recValue) {
+        if (key_exists("_requirements", $matched_config)) {
+            foreach ($matched_config["_requirements"] as $reqName => $recValue) {
 
                 //если есть ограничение по методу
                 if ($reqName === "_method") {
