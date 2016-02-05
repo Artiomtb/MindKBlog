@@ -28,15 +28,20 @@ class Application
     {
         $router = new Router($this->config["routes"]);
         $route_answer = $router->route(Request::create());
+        $route = $route_answer["route"];
 
-        $controller_class = $route_answer["route"]["controller"];
-        $method_name = $route_answer["route"]["action"] . "Action";
-
-        if (class_exists($controller_class) && method_exists($controller_class, $method_name)) {
-            $request_params = $route_answer["params"];
-            $this->runController($controller_class, $method_name, $request_params);
+        //если роут не найден по данному uri
+        if (empty($route)) {
+            echo "Such route does not exists";
         } else {
-            echo "Such controller and method does not exists: " . "$controller_class -> $method_name()<br/>";
+            $controller_class = $route["controller"];
+            $method_name = $route["action"] . "Action";
+            if (class_exists($controller_class) && method_exists($controller_class, $method_name)) {
+                $request_params = $route_answer["params"];
+                $this->runController($controller_class, $method_name, $request_params);
+            } else {
+                echo "Such controller and method does not exists: " . "$controller_class -> $method_name()<br/>";
+            }
         }
 
     }
