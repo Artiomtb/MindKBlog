@@ -5,9 +5,7 @@
  * Date: 10/15/14
  * Time: 12:49 PM
  */
-
 namespace Blog\Controller;
-
 use Blog\Model\Post;
 use Framework\Controller\Controller;
 use Framework\DI\Service;
@@ -15,23 +13,17 @@ use Framework\Exception\DatabaseException;
 use Framework\Exception\HttpNotFoundException;
 use Framework\Request\Request;
 use Framework\Response\Response;
-use Framework\Response\ResponseType;
 use Framework\Validation\Validator;
-
 class PostController extends Controller
 {
-
     public function indexAction()
     {
-//        return $this->render('index.html', array('posts' => Post::find('all')));
-        return new Response("index");
+        return $this->render('index.html', array('posts' => Post::find('all')));
     }
-
     public function getPostAction($id)
     {
         return new Response('Post: #'.$id);
     }
-
     public function addAction()
     {
         if ($this->getRequest()->isPost()) {
@@ -41,7 +33,6 @@ class PostController extends Controller
                 $post->title   = $this->getRequest()->post('title');
                 $post->content = trim($this->getRequest()->post('content'));
                 $post->date    = $date->format('Y-m-d H:i:s');
-
                 $validator = new Validator($post);
                 if ($validator->isValid()) {
                     $post->save();
@@ -53,19 +44,16 @@ class PostController extends Controller
                 $error = $e->getMessage();
             }
         }
-
         return $this->render(
-                    'add.html',
-                    array('action' => $this->generateRoute('add_post'), 'errors' => isset($error)?$error:null)
+            'add.html',
+            array('action' => $this->generateRoute('add_post'), 'errors' => isset($error)?$error:null)
         );
     }
-
     public function showAction($id)
     {
         if (!$post = Post::find((int)$id)) {
             throw new HttpNotFoundException('Page Not Found!');
         }
-        return new Response("Show me $id post!", ResponseType::OK);
-//        return $this->render('show.html', array('post' => $post));
+        return $this->render('show.html', array('post' => $post));
     }
 }
