@@ -13,6 +13,7 @@ class Application
 {
 
     private $config;
+    private $request;
 
     /**
      * Конструктор фронт контроллера
@@ -32,7 +33,8 @@ class Application
     public function run()
     {
         $router = new Router($this->config["routes"]);
-        $route_answer = $router->route(Request::create());
+        $this->request = Request::create();
+        $route_answer = $router->route($this->request);
         $route = $route_answer["route"];
 
         //если роут не найден по данному uri
@@ -67,7 +69,7 @@ class Application
      */
     private function getResponseFromController($controller_name, $method_name, $params = array())
     {
-        $controller = new $controller_name();
+        $controller = new $controller_name($this->request);
         if (!empty($params)) {
             //TODO добавить биндинг переменных по имени
             return call_user_func_array(array($controller, $method_name), $params);

@@ -7,6 +7,18 @@ use Framework\Request\Request;
 class Controller
 {
 
+
+    private $request;
+
+
+    /**
+     * Controller constructor.
+     */
+    public function __construct($request)
+    {
+        $this->request = $request;
+    }
+
     public function render($view, $params)
     {
         return true;
@@ -14,17 +26,17 @@ class Controller
 
     public function getRequest()
     {
-        return "";
+        return $this->request;
     }
 
 
-    public function redirect($route, $message="")
+    public function redirect($route, $message = "")
     {
-        return "";
+        return ""; //выдать респонс
     }
 
 
-    public function generateRoute($routeName)
+    public function generateRoute($routeName, $params = array())
     {
         return true;
     }
