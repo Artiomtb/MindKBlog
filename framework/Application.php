@@ -35,6 +35,7 @@ class Application
     public function run()
     {
         $router = new Router($this->config["routes"]);
+        Service::set("router", $router);
         $this->request = Request::create();
         $route_answer = $router->route($this->request);
         $route = $route_answer["route"];

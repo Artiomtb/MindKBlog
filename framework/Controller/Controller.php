@@ -2,6 +2,7 @@
 
 namespace Framework\Controller;
 
+use Framework\DI\Service;
 use Framework\Request\Request;
 use Framework\Response\ResponseRedirect;
 
@@ -42,10 +43,15 @@ class Controller
         return new ResponseRedirect($route, $message);
     }
 
-
-    public function generateRoute($routeName, $params = array())
+    /**
+     * Возвращает путь по заданному имени роута и параметрам
+     * @param string $route_name имя роута как в конфиге
+     * @param array $params необязательный параметр - ассоциативный массив в формате имя переменной => значение
+     * @return string uri согласно паттерну заданного роута с учетом значений параметров. Если роут не найден - вернется значение /
+     */
+    public function generateRoute($route_name, $params = array())
     {
-        return true;
+        return Service::get("router")->generateRoute($route_name, $params);
     }
 
 }
