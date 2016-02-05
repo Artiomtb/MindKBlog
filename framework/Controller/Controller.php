@@ -9,12 +9,11 @@ use Framework\Response\ResponseRedirect;
 class Controller
 {
 
-
     private $request;
 
-
     /**
-     * Controller constructor.
+     * Конструктор контроллера
+     * @param Request $request реквест
      */
     public function __construct($request)
     {
@@ -26,11 +25,14 @@ class Controller
         return true;
     }
 
+    /**
+     * Метод возвращает реквест
+     * @return Request реквест
+     */
     public function getRequest()
     {
         return $this->request;
     }
-
 
     /**
      * Метод выполняет редирект по заданному адресу с заданным сообщением
@@ -53,5 +55,4 @@ class Controller
     {
         return Service::get("router")->generateRoute($route_name, $params);
     }
-
 }
