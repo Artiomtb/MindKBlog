@@ -2,6 +2,7 @@
 
 
 namespace Framework\Response;
+
 use Framework\Logger\Logger;
 
 /**
@@ -125,4 +126,11 @@ class Response
         $this->content_type = $content_type;
         self::$logger->debug("Response content type changed: $content_type");
     }
+
+    public function __toString()
+    {
+        return "Code: " . $this->response_code . ", content-type: " . $this->content_type;
+    }
+
+
 }
