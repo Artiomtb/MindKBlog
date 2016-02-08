@@ -60,7 +60,6 @@ class Application
             if (class_exists($controller_class) && method_exists($controller_class, $method_name)) {
                 $request_params = $route_answer["params"];
                 $response = $this->getResponseFromController($controller_class, $method_name, $request_params);
-                self::$logger->debug("Got response: " . $response);
 
 //                TODO добавить оборачивание респонса в шаблон
 //                if("text/html" === $response->getContentType()) {
@@ -103,7 +102,9 @@ class Application
         $controller = new $controller_name($this->request);
 
         self::$logger->debug("Calling $controller_name->$method_name(" . implode(", ", $ordered_params) . ")");
-        return call_user_func_array(array($controller, $method_name), $ordered_params);
+        $response = call_user_func_array(array($controller, $method_name), $ordered_params);
+        self::$logger->debug("Got response: " . $response);
+        return $response;
     }
 
     /**
