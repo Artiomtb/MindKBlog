@@ -14,7 +14,7 @@ class Logger
     const WARN_LEVEL = "WARN";
     const ERROR_LEVEL = "ERROR";
 
-    private static $default_params = array("path" => __DIR__ . "/../../log.log",
+    private static $default_params = array("path" => "../myapp.log",
         "date_format" => "Y.m.d H:i:s.u",
         "error_level" => self::INFO_LEVEL,
         "backtrace_enabled" => true);
