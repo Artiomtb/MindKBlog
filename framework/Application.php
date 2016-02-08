@@ -60,6 +60,7 @@ class Application
             if (class_exists($controller_class) && method_exists($controller_class, $method_name)) {
                 $request_params = $route_answer["params"];
                 $response = $this->getResponseFromController($controller_class, $method_name, $request_params);
+                self::$logger->debug("Got response: " . $response);
 
 //                TODO добавить оборачивание респонса в шаблон
 //                if("text/html" === $response->getContentType()) {
@@ -69,6 +70,7 @@ class Application
 //                $response->setContent($response->getContent())
 
             } else {
+                self::$logger->error("Such controller and method does not exists: " . "$controller_class -> $method_name()");
                 $response = new Response("Such controller and method does not exists: " . "$controller_class -> $method_name()", ResponseType::NOT_FOUND);
             }
         }
@@ -136,14 +138,14 @@ class Application
      */
     private function configureLogParams($mode, $log_params)
     {
-        if(!array_key_exists("error_level", $log_params)) {
+        if (!array_key_exists("error_level", $log_params)) {
             if ("prod" == $mode) {
                 $log_params["error_level"] = "error";
             } elseif ("dev" == $mode) {
                 $log_params["error_level"] = "debug";
             }
         }
-        if(!array_key_exists("backtrace_enabled", $log_params)) {
+        if (!array_key_exists("backtrace_enabled", $log_params)) {
             if ("prod" == $mode) {
                 $log_params["backtrace_enabled"] = false;
             } elseif ("dev" == $mode) {
