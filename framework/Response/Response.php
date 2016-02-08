@@ -30,7 +30,6 @@ class Response
         $this->response_code = $response_code;
         $this->content_type = $content_type;
         self::$logger = Logger::getLogger();
-        self::$logger->debug("Created response: $response_code, $content_type");
     }
 
     /**
@@ -105,7 +104,7 @@ class Response
     public function setResponseCode($response_code)
     {
         $this->response_code = $response_code;
-        self::$logger->debug("Response code changed: $response_code, $content_type");
+        self::$logger->debug("Response code changed: $response_code");
     }
 
     /**
@@ -131,6 +130,4 @@ class Response
     {
         return "Code: " . $this->response_code . ", content-type: " . $this->content_type;
     }
-
-
 }
