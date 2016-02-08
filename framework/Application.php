@@ -4,6 +4,7 @@
 namespace Framework;
 
 use Framework\DI\Service;
+use Framework\Logger\Logger;
 use Framework\Request\Request;
 use Framework\Response\Response;
 use Framework\Response\ResponseType;
@@ -14,6 +15,9 @@ class Application
 
     private $config;
     private $request;
+    private $router;
+
+    private static $logger;
 
     /**
      * Конструктор фронт контроллера
@@ -22,9 +26,14 @@ class Application
     public function __construct($config_path)
     {
         $config = include_once $config_path;
-        $this->setErrorReportingLevel($config["mode"]);
+        $run_mode = $config["mode"];
+        self::$logger = Logger::getLogger($this->configureLogParams($run_mode, $config["log"]));
+        self::$logger->debug("Run mode set to " . $run_mode);
+        $this->setErrorReportingLevel($run_mode);
         Service::setAll($config["di"]);
+        $this->router = new Router($config["routes"]);
         $this->config = $config;
+
 
         //TODO добавить обработку остальных параметров конфига, когда понядобятся
     }
@@ -34,14 +43,16 @@ class Application
      */
     public function run()
     {
-        $router = new Router($this->config["routes"]);
-        Service::set("router", $router);
+        self::$logger->debug("Running application...");
+
+        Service::set("router", $this->router);
         $this->request = Request::create();
-        $route_answer = $router->route($this->request);
+        $route_answer = $this->router->route($this->request);
         $route = $route_answer["route"];
 
         //если роут не найден по данному uri
         if (empty($route)) {
+            self::$logger->warn("Router was not found");
             $response = new Response("Route not found", ResponseType::NOT_FOUND);
         } else {
             $controller_class = $route["controller"];
@@ -114,5 +125,23 @@ class Application
         } else {
             error_reporting(E_ERROR | E_WARNING | E_PARSE);
         }
+    }
+
+    /**
+     * Корректирует настройки логгирования согласно mode запуска приложения. Если prod - уровень логгирования будет выставлен error, backtrace отлючен. Если dev - уровень логгирования будет выставлен debug, backtrace включен. Иначе - как в исходном конфиге.
+     * @param string $mode тип запуска приложения
+     * @param array $log_params параметры логгирования (полученные из конфига)
+     * @return array скорректированные параметры логгирования
+     */
+    private function configureLogParams($mode, $log_params)
+    {
+        if ("prod" == $mode) {
+            $log_params["error_level"] = "error";
+            $log_params["backtrace_enabled"] = false;
+        } elseif ("dev" == $mode) {
+            $log_params["error_level"] = "debug";
+            $log_params["backtrace_enabled"] = true;
+        }
+        return $log_params;
     }
 }
