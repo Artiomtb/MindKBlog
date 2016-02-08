@@ -2,6 +2,7 @@
 
 
 namespace Framework\Response;
+use Framework\Logger\Logger;
 
 /**
  * Class Response ответ, посылаемый на запрос
@@ -14,6 +15,8 @@ class Response
     private $response_code;
     private $content_type;
 
+    private static $logger;
+
     /**
      * Response constructor.
      * @param string $content контент, который вернется в ответе на запрос
@@ -25,6 +28,7 @@ class Response
         $this->content = $content;
         $this->response_code = $response_code;
         $this->content_type = $content_type;
+        self::$logger = Logger::getLogger();
     }
 
     /**
@@ -42,6 +46,7 @@ class Response
      */
     public function send()
     {
+        self::$logger->debug("Sending response...");
         $this->sendHeaders();
         $this->sendContent();
     }
