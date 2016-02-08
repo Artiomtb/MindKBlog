@@ -5,10 +5,12 @@ namespace Framework;
 
 use Framework\DI\Service;
 use Framework\Logger\Logger;
+use Framework\Model\Database;
 use Framework\Request\Request;
 use Framework\Response\Response;
 use Framework\Response\ResponseType;
 use Framework\Router\Router;
+
 
 class Application
 {
@@ -18,6 +20,8 @@ class Application
     private $router;
 
     private static $logger;
+
+    private $pdo;
 
     /**
      * Конструктор фронт контроллера
@@ -30,10 +34,12 @@ class Application
         self::$logger = Logger::getLogger($this->configureLogParams($run_mode, $config["log"]));
         self::$logger->debug("Run mode set to " . $run_mode);
         $this->setErrorReportingLevel($run_mode);
-        Service::setAll($config["di"]);
         $this->router = new Router($config["routes"]);
+        $this->pdo = Database::getInstance($config["pdo"]);
+        Service::setAll($config["di"]);
+        Service::set("router", $this->router);
+        Service::set("pdo", $this->pdo->getConnection());
         $this->config = $config;
-
 
         //TODO добавить обработку остальных параметров конфига, когда понядобятся
     }
@@ -45,7 +51,6 @@ class Application
     {
         self::$logger->debug("Running application...");
 
-        Service::set("router", $this->router);
         $this->request = Request::create();
         $route_answer = $this->router->route($this->request);
         $route = $route_answer["route"];
@@ -73,7 +78,9 @@ class Application
                 $response = new Response("Such controller and method does not exists: " . "$controller_class -> $method_name()", ResponseType::NOT_FOUND);
             }
         }
+        $this->pdo->closeConnection();
         $response->send();
+
     }
 
     /**

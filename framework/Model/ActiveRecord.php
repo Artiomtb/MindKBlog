@@ -43,8 +43,8 @@ abstract class ActiveRecord
         return $result;
     }
 
-//    public function save()
-//    {
+    public function save()
+    {
 //        $pdo = Service::get("pdo");
 //        $table_name = $this->getTable();
 //        $id = $this->id;
@@ -55,7 +55,7 @@ abstract class ActiveRecord
 //        } else {
 //            echo "Insert";
 //        }
-//    }
+    }
 
     public static function getTable()
     {
