@@ -3,6 +3,7 @@
 
 namespace Framework\Router;
 
+use Framework\Logger\Logger;
 use Framework\Request\Request;
 
 class Router
@@ -10,6 +11,8 @@ class Router
 
     private $config_array;
     private $request;
+
+    private static $logger;
 
     /**
      * Конструктор, принимает на вход конфиг роутера
@@ -24,6 +27,7 @@ class Router
                 $config_array[$name]["pattern"] = $config["pattern"] . "/";
             }
         }
+        self::$logger = Logger::getLogger();
         $this->config_array = $config_array;
     }
 
@@ -34,6 +38,7 @@ class Router
      */
     public function route($request)
     {
+        self::$logger->debug("Start routing request by URI " . $request->getUri() . " and method " . $request->getMethod());
         $this->request = $request;
         $uri = $request->getUri();
 
@@ -64,6 +69,7 @@ class Router
             //если подходит - проверить, соблюдаются ли условия, описанные в _requirements. Если да - роут найден
             if (!is_null($uri_variables) && $this->checkRequirements($config, $uri_variables)) {
                 $matched_config = $config;
+                self::$logger->debug("Found config: " . $matched_config["pattern"]);
                 break;
             }
         }
