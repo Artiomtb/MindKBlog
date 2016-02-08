@@ -67,18 +67,29 @@ class Application
     /**
      * @param $controller_name string имя класса-контроллера, который необходимо запустить
      * @param $method_name string имя метода в классе контроллере
-     * @param array $params параметры, которые необходимо передать в метод. Если масси пустой - будет вызван метод без параметров
+     * @param array $params параметры, которые необходимо передать в метод. Если массив пустой - будет вызван метод без параметров
      * @return Response ответ сервера
      */
     private function getResponseFromController($controller_name, $method_name, $params = array())
     {
-        $controller = new $controller_name($this->request);
-        if (!empty($params)) {
-            //TODO добавить биндинг переменных по имени
-            return call_user_func_array(array($controller, $method_name), $params);
-        } else {
-            return $controller->{$method_name}();
+        $ordered_params = array();
+
+        //получим все переменные нужного метода контроллера
+        $reflection = new \ReflectionClass($controller_name);
+        $method_params = $reflection->getMethod($method_name)->getParameters();
+
+        //перестроим входящие переменные в порядке их следования в методе в массиве $ordered_params. Если какая-то переменная не пришла - подставим пустое значение
+        foreach ($method_params as $param) {
+            $current_value = "";
+            $cur_param_name = $param->name;
+            if (array_key_exists($cur_param_name, $params)) {
+                $current_value = $params[$cur_param_name];
+            }
+            $ordered_params[] = $current_value;
         }
+        $controller = new $controller_name($this->request);
+
+        return call_user_func_array(array($controller, $method_name), $ordered_params);
     }
 
     /**
