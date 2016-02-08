@@ -100,6 +100,7 @@ class Application
         }
         $controller = new $controller_name($this->request);
 
+        self::$logger->debug("Calling $controller_name->$method_name(" . implode(", ", $ordered_params) . ")");
         return call_user_func_array(array($controller, $method_name), $ordered_params);
     }
 
@@ -128,19 +129,26 @@ class Application
     }
 
     /**
-     * Корректирует настройки логгирования согласно mode запуска приложения. Если prod - уровень логгирования будет выставлен error, backtrace отлючен. Если dev - уровень логгирования будет выставлен debug, backtrace включен. Иначе - как в исходном конфиге.
+     * Дополняет настройки логгирования error_level и backtrace_enabled согласно mode запуска приложения, если они не указаны в конфиге). Если prod - уровень логгирования будет выставлен error, backtrace отлючен. Если dev - уровень логгирования будет выставлен debug, backtrace включен.
      * @param string $mode тип запуска приложения
      * @param array $log_params параметры логгирования (полученные из конфига)
      * @return array скорректированные параметры логгирования
      */
     private function configureLogParams($mode, $log_params)
     {
-        if ("prod" == $mode) {
-            $log_params["error_level"] = "error";
-            $log_params["backtrace_enabled"] = false;
-        } elseif ("dev" == $mode) {
-            $log_params["error_level"] = "debug";
-            $log_params["backtrace_enabled"] = true;
+        if(!array_key_exists("error_level", $log_params)) {
+            if ("prod" == $mode) {
+                $log_params["error_level"] = "error";
+            } elseif ("dev" == $mode) {
+                $log_params["error_level"] = "debug";
+            }
+        }
+        if(!array_key_exists("backtrace_enabled", $log_params)) {
+            if ("prod" == $mode) {
+                $log_params["backtrace_enabled"] = false;
+            } elseif ("dev" == $mode) {
+                $log_params["backtrace_enabled"] = true;
+            }
         }
         return $log_params;
     }
