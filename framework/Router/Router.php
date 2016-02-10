@@ -3,6 +3,7 @@
 
 namespace Framework\Router;
 
+use Framework\Logger\Logger;
 use Framework\Request\Request;
 
 class Router
@@ -10,6 +11,8 @@ class Router
 
     private $config_array;
     private $request;
+
+    private static $logger;
 
     /**
      * Конструктор, принимает на вход конфиг роутера
@@ -24,6 +27,7 @@ class Router
                 $config_array[$name]["pattern"] = $config["pattern"] . "/";
             }
         }
+        self::$logger = Logger::getLogger();
         $this->config_array = $config_array;
     }
 
@@ -34,6 +38,7 @@ class Router
      */
     public function route($request)
     {
+        self::$logger->debug("Start routing request by URI " . $request->getUri() . " and method " . $request->getMethod());
         $this->request = $request;
         $uri = $request->getUri();
 
@@ -64,6 +69,7 @@ class Router
             //если подходит - проверить, соблюдаются ли условия, описанные в _requirements. Если да - роут найден
             if (!is_null($uri_variables) && $this->checkRequirements($config, $uri_variables)) {
                 $matched_config = $config;
+                self::$logger->debug("Found config: " . $matched_config["pattern"]);
                 break;
             }
         }
@@ -135,9 +141,8 @@ class Router
     private function checkRequirements($matched_config, $uri_variables)
     {
         $result = true;
-        $requirements = $matched_config["_requirements"];
-        if (!is_null($requirements)) {
-            foreach ($requirements as $reqName => $recValue) {
+        if (array_key_exists("_requirements", $matched_config)) {
+            foreach ($matched_config["_requirements"] as $reqName => $recValue) {
 
                 //если есть ограничение по методу
                 if ($reqName === "_method") {
@@ -154,6 +159,25 @@ class Router
                     }
                 }
             }
+        }
+        return $result;
+    }
+
+    /**
+     * Возвращает путь по заданному имени роута и параметрам
+     * @param string $route_name имя роута как в конфиге
+     * @param array $params необязательный параметр - ассоциативный массив в формате имя переменной => значение
+     * @return string uri согласно паттерну заданного роута с учетом значений параметров. Если роут не найден - вернется значение /
+     */
+    public function generateRoute($route_name, $params = array())
+    {
+        $result = "/";
+        if (array_key_exists($route_name, $this->config_array)) {
+            $route_uri = $this->config_array[$route_name]["pattern"];
+            foreach ($params as $param_name => $param_value) {
+                $route_uri = str_replace("{" . $param_name . "}", $param_value, $route_uri);
+            }
+            $result = $route_uri;
         }
         return $result;
     }

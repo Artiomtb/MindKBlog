@@ -27,10 +27,12 @@ class Loader
         //регистрируем функцию для поиска классов
         spl_autoload_register(function ($className) {
             $namespaceName = strtok($className, "\\");
-            $namespacePath = self::$namespaces[$namespaceName . "\\"];
-            $path = str_replace("\\", DIRECTORY_SEPARATOR, $namespacePath . str_replace($namespaceName, "", $className)) . ".php";
-            if (file_exists($path)) {
-                include_once($path);
+            if(array_key_exists($namespaceName . "\\", self::$namespaces)) {
+                $namespacePath = self::$namespaces[$namespaceName . "\\"];
+                $path = str_replace("\\", DIRECTORY_SEPARATOR, $namespacePath . str_replace($namespaceName, "", $className)) . ".php";
+                if (file_exists($path)) {
+                    include_once($path);
+                }
             }
         });
     }

@@ -2,31 +2,57 @@
 
 namespace Framework\Controller;
 
+use Framework\DI\Service;
 use Framework\Request\Request;
+use Framework\Response\ResponseRedirect;
 
 class Controller
 {
+
+    private $request;
+
+    /**
+     * Конструктор контроллера
+     * @param Request $request реквест
+     */
+    public function __construct($request)
+    {
+        $this->request = $request;
+    }
 
     public function render($view, $params)
     {
         return true;
     }
 
+    /**
+     * Метод возвращает реквест
+     * @return Request реквест
+     */
     public function getRequest()
     {
-        return "";
+        return $this->request;
     }
 
-
-    public function redirect($route, $message="")
+    /**
+     * Метод выполняет редирект по заданному адресу с заданным сообщением
+     * @param string $route uri для редиректа
+     * @param string $message сообщение редиректа (будет отправлено как GET параметр с key = redirectmessage)
+     * @return ResponseRedirect респонс-редирект на заданный uri с заданным сообщением
+     */
+    public function redirect($route, $message = "")
     {
-        return "";
+        return new ResponseRedirect($route, $message);
     }
 
-
-    public function generateRoute($routeName)
+    /**
+     * Возвращает путь по заданному имени роута и параметрам
+     * @param string $route_name имя роута как в конфиге
+     * @param array $params необязательный параметр - ассоциативный массив в формате имя переменной => значение
+     * @return string uri согласно паттерну заданного роута с учетом значений параметров. Если роут не найден - вернется значение /
+     */
+    public function generateRoute($route_name, $params = array())
     {
-        return true;
+        return Service::get("router")->generateRoute($route_name, $params);
     }
-
 }
