@@ -1,3 +1,20 @@
+<?php
+
+use Framework\DI\Service;
+use Framework\Response\Response;
+
+$include = function ($class_name, $method_name, $params) {
+    $response = new Response("");
+    Service::get("logger")->warn("Before call $class_name");
+    if (class_exists($class_name)) {
+        $controller = new $class_name;
+        $response = call_user_func_array(array($controller, $method_name . "Action"), $params);
+    }
+    echo $response->getContent();
+}
+
+?>
+
 <div class="col-sm-8 blog-main">
     <?php foreach ($posts as $post) { ?>
 
