@@ -3,6 +3,7 @@
 
 namespace Framework\Router;
 
+use Framework\DI\Service;
 use Framework\Logger\Logger;
 use Framework\Request\Request;
 
@@ -27,7 +28,7 @@ class Router
                 $config_array[$name]["pattern"] = $config["pattern"] . "/";
             }
         }
-        self::$logger = Logger::getLogger();
+        self::$logger = Service::get("logger");
         $this->config_array = $config_array;
     }
 

@@ -32,6 +32,7 @@ class Application
         $config = include_once $config_path;
         $run_mode = $config["mode"];
         self::$logger = Logger::getLogger($this->configureLogParams($run_mode, $config["log"]));
+        Service::set("logger", self::$logger);
         self::$logger->debug("Run mode set to " . $run_mode);
         $this->setErrorReportingLevel($run_mode);
         $this->router = new Router($config["routes"]);

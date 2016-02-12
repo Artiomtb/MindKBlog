@@ -3,6 +3,7 @@
 
 namespace Framework\Response;
 
+use Framework\DI\Service;
 use Framework\Logger\Logger;
 
 /**
@@ -29,7 +30,7 @@ class Response
         $this->content = $content;
         $this->response_code = $response_code;
         $this->content_type = $content_type;
-        self::$logger = Logger::getLogger();
+        self::$logger = Service::get("logger");
     }
 
     /**

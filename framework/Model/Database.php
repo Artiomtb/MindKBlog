@@ -2,6 +2,7 @@
 
 namespace Framework\Model;
 
+use Framework\DI\Service;
 use Framework\Logger\Logger;
 use PDO;
 
@@ -23,7 +24,7 @@ class Database
      */
     public function __construct($dns_params)
     {
-        self::$log = Logger::getLogger();
+        self::$log = Service::get("logger");
         try {
             $user = $dns_params["user"];
             $dns = $dns_params["dns"];
