@@ -3,6 +3,7 @@
 namespace Framework\Controller;
 
 use Framework\DI\Service;
+use Framework\Exception\HttpNotFoundException;
 use Framework\Renderer\Renderer;
 use Framework\Request\Request;
 use Framework\Response\Response;
@@ -29,17 +30,24 @@ class Controller
     }
 
     /**
-     * Метод получает имя view, преобразует его в абсолютный путь и передает рендереру
+     * Метод получает имя view, преобразует его в абсолютный путь, получает от рендерера сформированный контент и возвращает респонс. Так же, при необходимости, оборачивает в шаблон
      * @param string $view имя вью
      * @param array $params параметры, которые необходимо передать рендереру
+     * @param bool $with_layout указывает, нужно ли оборачивать контент в шаблон (по умолчанию - да)
+     * @return Response ответ
      * @throws HttpNotFoundException если вью не найдена
-     * @return Response сформированный рендерером response
      */
-    public function render($view, $params)
+    public function render($view, $params, $with_layout = true)
     {
         $view_path = $this->generatePathToView($view);
+        self::$logger->debug("Rendering view $view " . (($with_layout == true) ? "with" : "without") . " layout");
         if (file_exists($view_path)) {
-            return Renderer::render($view_path, $params);
+            $response = Renderer::render($view_path, $params);
+            if ($with_layout == true && file_exists($layout_path = Service::get("config")["main_layout"])) {
+                $response_with_layout = Renderer::render($layout_path, array("content" => $response));
+                $response = $response_with_layout;
+            }
+            return new Response($response);
         } else {
             self::$logger->error("View $view_path does not exists");
             throw new HttpNotFoundException('Page Not Found!');

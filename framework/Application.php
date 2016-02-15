@@ -40,6 +40,7 @@ class Application
         Service::setAll($config["di"]);
         Service::set("router", $this->router);
         Service::set("pdo", $this->pdo->getConnection());
+        Service::set("config", $config);
         $this->config = $config;
 
         //TODO добавить обработку остальных параметров конфига, когда понядобятся
