@@ -43,8 +43,17 @@ class Controller
         self::$logger->debug("Rendering view $view " . (($with_layout == true) ? "with" : "without") . " layout");
         if (file_exists($view_path)) {
             $response = Renderer::render($view_path, $params);
+
+            //рендерим шаблон, если необходимо
             if ($with_layout == true && file_exists($layout_path = Service::get("config")["main_layout"])) {
-                $response_with_layout = Renderer::render($layout_path, array("content" => $response));
+
+                //создаем и передаем в шаблон массив с сообщениями
+                $flush = array();
+                $mess = $this->request->get("redirectmessage");
+                if (isset($mess)) {
+                    $flush["info"] = array($mess);
+                }
+                $response_with_layout = Renderer::render($layout_path, array("content" => $response, "flush" => $flush));
                 $response = $response_with_layout;
             }
             return new Response($response);
