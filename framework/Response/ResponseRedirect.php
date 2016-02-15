@@ -24,7 +24,7 @@ class ResponseRedirect extends Response
         $route = ($message == "") ? $route : $route . "?redirectmessage=" . $message;
         self::$logger = Service::get("logger");
         self::$logger->debug("Redirecting to $route ...");
-        parent::sendHeader("Location", $route);
-        exit;
+        parent::__construct("", ResponseType::MOVED_PERMANENTLY);
+        parent::addHeader("Location", $route);
     }
 }

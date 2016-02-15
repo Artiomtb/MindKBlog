@@ -16,6 +16,7 @@ class Response
     private $content;
     private $response_code;
     private $content_type;
+    private $headers = array();
 
     private static $logger;
 
@@ -34,13 +35,13 @@ class Response
     }
 
     /**
-     * Функция отправлет header parameters в текущий респонс
+     * Функция добавляет header parameters в текущий респонс
      * @param string $header_name ключ header параметра
      * @param string $header_value значение header параметра
      */
-    public function sendHeader($header_name, $header_value)
+    public function addHeader($header_name, $header_value)
     {
-        header($header_name . ": " . $header_value);
+        $this->headers[$header_name] = $header_value;
     }
 
     /**
@@ -58,8 +59,11 @@ class Response
      */
     public function sendHeaders()
     {
-        header("HTTP/1.1 " . $this->response_code);
-        $this->sendHeader("Content-Type", $this->content_type);
+        header($_SERVER["SERVER_PROTOCOL"] . " " . $this->response_code);
+        header("Content-Type: " . $this->content_type);
+        foreach ($this->headers as $name => $value) {
+            header($name . ": " . $value);
+        }
     }
 
     /**
