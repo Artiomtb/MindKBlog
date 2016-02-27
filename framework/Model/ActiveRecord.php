@@ -45,16 +45,27 @@ abstract class ActiveRecord
 
     public function save()
     {
-//        $pdo = Service::get("pdo");
-//        $table_name = $this->getTable();
-//        $id = $this->id;
-//        echo "Table $table_name, id $id";
-//        if ($this->isObjectExists($pdo, $table_name, $id)) {
-//            echo "Update";
-//            $this->updateObject($pdo, $table_name, $this);
-//        } else {
-//            echo "Insert";
-//        }
+        $logger = Service::get("logger");
+        $table_name = $this->getTable();
+        $pdo = Service::get("pdo");
+        $object_fields = get_object_vars($this);
+
+        $query = "INSERT INTO " . $table_name . " (" .
+            join(", ", array_keys($object_fields)) . ") VALUES(" .
+            join(", ", array_map(function ($field) {
+                return ":" . $field;
+            }, array_keys($object_fields))) . ")";
+
+        $pdo->beginTransaction();
+        $stmt = $pdo->prepare($query);
+        foreach ($object_fields as $field => $value) {
+            $stmt->bindValue(":" . $field, $value);
+        }
+        $logger->debug("Executing query $query");
+        $stmt->execute();
+        $pdo->commit();
+
+        $logger->info(print_r($this, true) . " was saved to table $table_name");
     }
 
     public static function getTable()
