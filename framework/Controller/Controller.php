@@ -23,7 +23,7 @@ class Controller
      * Конструктор контроллера
      * @param Request $request реквест
      */
-    public function __construct($request)
+    public function __construct($request = null)
     {
         $this->request = $request;
         self::$logger = Service::get("logger");
@@ -53,7 +53,7 @@ class Controller
                 if (isset($mess)) {
                     $flush["info"] = array($mess);
                 }
-                $response_with_layout = Renderer::render($layout_path, array("content" => $response, "flush" => $flush));
+                $response_with_layout = Renderer::render($layout_path, array("content" => $response, "flush" => $flush, "user" => null));
                 $response = $response_with_layout;
             }
             return new Response($response);
