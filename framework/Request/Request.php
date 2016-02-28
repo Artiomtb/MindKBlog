@@ -44,7 +44,7 @@ class Request
      */
     public function post($name)
     {
-        return (array_key_exists($name, $_POST)) ? $_POST[$name] : null;
+        return (array_key_exists($name, $_POST)) ? htmlspecialchars($_POST[$name]) : null;
     }
 
     /**
@@ -54,7 +54,7 @@ class Request
      */
     public function get($name)
     {
-        return (array_key_exists($name, $_GET)) ? $_GET[$name] : null;
+        return (array_key_exists($name, $_GET)) ? htmlspecialchars($_GET[$name]) : null;
     }
 
     /**
