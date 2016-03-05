@@ -46,7 +46,7 @@ class PostController extends Controller
         }
         return $this->render(
             'add.html',
-            array('action' => $this->generateRoute('add_post'), 'errors' => isset($error)?$error:null)
+            array('action' => $this->generateRoute('add_post'), 'errors' => isset($error)?$error:null, 'post' => isset($post)?$post:null)
         );
     }
     public function showAction($id)
