@@ -21,23 +21,24 @@ abstract class ActiveRecord
     public static function find($param)
     {
         $pdo = Service::get("pdo");
-        $object_class_name = get_called_class();
-        $table_name = call_user_func(array($object_class_name, "getTable"));
-        $query = "select * from $table_name ";
+        $object_class_name = static::class;
+        $table_name = static::getTable();
+        $query = "select * from $table_name";
 
+        $result = null;
         if ("all" == $param) {
             $stmt = $pdo->prepare($query);
             $stmt->execute();
             $result = array();
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $result[] = self::createObjectFromRow($object_class_name, $row);
+                $result[] = self::createObjectFromArray($object_class_name, $row);
             }
-        } else {
-            $query = $query . "where id=:id";
+        } elseif (is_numeric($param)) {
+            $query = $query . " where id=:id";
             $stmt = $pdo->prepare($query);
             $stmt->execute(array("id" => $param));
             if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $result = self::createObjectFromRow($object_class_name, $row);
+                $result = self::createObjectFromArray($object_class_name, $row);
             }
         }
         return $result;
@@ -75,30 +76,15 @@ abstract class ActiveRecord
     /**
      * Возвращает объект по имени его класса и ассоциативному массиву в формате имя параметра => значение
      * @param string $object_class_name имя класса объекта
-     * @param array $row ассоциативный массив-строка из БД
+     * @param array $array ассоциативный массив-строка из БД
      * @return object экземпляр заданного класса с заданными параметрами
      */
-    private static function createObjectFromRow($object_class_name, $row)
+    private static function createObjectFromArray($object_class_name, $array)
     {
         $object = new $object_class_name;
-        foreach ($row as $index => $value) {
+        foreach ($array as $index => $value) {
             $object->$index = $value;
         }
         return $object;
     }
-
-//    private function isObjectExists($pdo, $table_name, $id)
-//    {
-//        $stmt = $pdo->prepare("SELECT id FROM " . $table_name . " WHERE id=:id");
-//        $stmt->execute(array("id" => $id));
-//        return !empty($stmt->fetch(PDO::FETCH_ASSOC));
-//    }
-//
-//    private function updateObject($pdo, $table_name, $object)
-//    {
-//        print_r($object);
-//        $query = "UPDATE $" . $table_name . " SET ";
-//
-//        $query = $query . " WHERE id=:id";
-//    }
 }
