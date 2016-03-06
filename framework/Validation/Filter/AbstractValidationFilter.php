@@ -1,6 +1,6 @@
 <?php
 
-namespace framework\Validation\Filter;
+namespace Framework\Validation\Filter;
 
 /**
  * Абстрактный класс для валидационного фильтра
