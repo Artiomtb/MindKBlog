@@ -22,7 +22,7 @@ class Database
      * Database constructor.
      * @param array $dns_params параметры соединения dns, user, password в виде ассоциативного массива.
      */
-    public function __construct($dns_params)
+    private function __construct($dns_params)
     {
         self::$log = Service::get("logger");
         try {
