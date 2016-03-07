@@ -20,30 +20,18 @@ abstract class ActiveRecord
      */
     public static function find($param)
     {
-        $pdo = Service::get("pdo");
-        $object_class_name = static::class;
-        $table_name = static::getTable();
-        $query = "select * from $table_name";
-
         $result = null;
         if ("all" == $param) {
-            $stmt = $pdo->prepare($query);
-            $stmt->execute();
-            $result = array();
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $result[] = self::createObjectFromArray($object_class_name, $row);
-            }
+            $result = self::findAll();
         } elseif (is_numeric($param)) {
-            $query = $query . " where id=:id";
-            $stmt = $pdo->prepare($query);
-            $stmt->execute(array("id" => $param));
-            if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $result = self::createObjectFromArray($object_class_name, $row);
-            }
+            $result = self::findByParam("id", $param);
         }
         return $result;
     }
 
+    /**
+     * Добавляет строку в БД для соответствующей сущности
+     */
     public function save()
     {
         $logger = Service::get("logger");
@@ -67,6 +55,58 @@ abstract class ActiveRecord
         $pdo->commit();
 
         $logger->info(print_r($this, true) . " was saved to table $table_name");
+    }
+
+    /**
+     * Реализует возможность поиска по любому свойству объекта через имя метода в формате findBy<field_name>
+     * @param $name string имя вызываемого метода
+     * @param array $arguments аргументы метода
+     * @return null|object найденный объект или null
+     */
+    public static function __callStatic($name, $arguments)
+    {
+        $result = null;
+        if (stripos($name, "findby") === 0 && count($arguments) > 0) {
+            $param_name = substr($name, 6);
+            $param_value = $arguments[0];
+            $result = self::findByParam($param_name, $param_value);
+        }
+        return $result;
+    }
+
+    /**
+     * Находит параметр в БД по имени свойста и его значению
+     * @param string $name имя свойства
+     * @param mixed $value значение
+     * @return null|object
+     */
+    private static function findByParam($name, $value)
+    {
+        $pdo = Service::get("pdo");
+        $result = null;
+        $object_class_name = static::class;
+        $query = "select * from " . static::getTable() . " where $name = :$name";
+        $stmt = $pdo->prepare($query);
+        $arr = array($name => $value);
+        $stmt->execute($arr);
+        if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $result = self::createObjectFromArray($object_class_name, $row);
+        }
+        return $result;
+    }
+
+    private static function findAll()
+    {
+        $pdo = Service::get("pdo");
+        $object_class_name = static::class;
+        $query = "select * from " . static::getTable();
+        $result = array();
+        $stmt = $pdo->prepare($query);
+        $stmt->execute();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $result[] = self::createObjectFromArray($object_class_name, $row);
+        }
+        return $result;
     }
 
     public static function getTable()
