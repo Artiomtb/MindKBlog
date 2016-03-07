@@ -3,26 +3,64 @@
 namespace Framework\Controller;
 
 use Framework\DI\Service;
+use Framework\Exception\HttpNotFoundException;
+use Framework\Renderer\Renderer;
 use Framework\Request\Request;
+use Framework\Response\Response;
 use Framework\Response\ResponseRedirect;
 
+/**
+ * Общий класс-контроллер
+ * @package    Framework\Controller
+ */
 class Controller
 {
-
     private $request;
+
+    private static $logger;
 
     /**
      * Конструктор контроллера
      * @param Request $request реквест
      */
-    public function __construct($request)
+    public function __construct($request = null)
     {
         $this->request = $request;
+        self::$logger = Service::get("logger");
     }
 
-    public function render($view, $params)
+    /**
+     * Метод получает имя view, преобразует его в абсолютный путь, получает от рендерера сформированный контент и возвращает респонс. Так же, при необходимости, оборачивает в шаблон
+     * @param string $view имя вью
+     * @param array $params параметры, которые необходимо передать рендереру
+     * @param bool $with_layout указывает, нужно ли оборачивать контент в шаблон (по умолчанию - да)
+     * @return Response ответ
+     * @throws HttpNotFoundException если вью не найдена
+     */
+    public function render($view, $params, $with_layout = true)
     {
-        return true;
+        $view_path = $this->generatePathToView($view);
+        self::$logger->debug("Rendering view $view " . (($with_layout == true) ? "with" : "without") . " layout");
+        if (file_exists($view_path)) {
+            $response = Renderer::render($view_path, $params);
+
+            //рендерим шаблон, если необходимо
+            if ($with_layout == true && file_exists($layout_path = Service::get("config")["main_layout"])) {
+
+                //создаем и передаем в шаблон массив с сообщениями
+                $flush = array();
+                $mess = $this->request->get("redirectmessage");
+                if (isset($mess)) {
+                    $flush["info"] = array($mess);
+                }
+                $response_with_layout = Renderer::render($layout_path, array("content" => $response, "flush" => $flush, "user" => null));
+                $response = $response_with_layout;
+            }
+            return new Response($response);
+        } else {
+            self::$logger->error("View $view_path does not exists");
+            throw new HttpNotFoundException('Page Not Found!');
+        }
     }
 
     /**
@@ -54,5 +92,23 @@ class Controller
     public function generateRoute($route_name, $params = array())
     {
         return Service::get("router")->generateRoute($route_name, $params);
+    }
+
+    /**
+     * Возвращает абсолютный путь к view файлу по его имени, используя имя контроллера
+     * @param string $view имя view файла
+     * @return string абсолютный путь к view файлу
+     */
+    private function generatePathToView($view)
+    {
+        self::$logger->debug("Looking for view file by name $view");
+        $file = debug_backtrace()[1]["file"];
+        $pos = strrpos($file, DIRECTORY_SEPARATOR, -1);
+        $before = substr($file, 0, $pos);
+        $after = substr($file, $pos + 1);
+        $controller_name = substr($after, 0, strpos($after, "Controller.php"));
+        $view_file = $before . "/../views/" . $controller_name . "/" . $view . ".php";
+        self::$logger->debug("Matched view $view_file");
+        return $view_file;
     }
 }

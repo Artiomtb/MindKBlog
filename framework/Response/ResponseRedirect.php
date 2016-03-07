@@ -2,7 +2,8 @@
 
 
 namespace Framework\Response;
-use Framework\Logger\Logger;
+
+use Framework\DI\Service;
 
 /**
  * Class ResponseRedirect класс респонса, отваечающий за перенаправление
@@ -21,9 +22,9 @@ class ResponseRedirect extends Response
     public function __construct($route, $message = "")
     {
         $route = ($message == "") ? $route : $route . "?redirectmessage=" . $message;
-        self::$logger = Logger::getLogger();
+        self::$logger = Service::get("logger");
         self::$logger->debug("Redirecting to $route ...");
-        parent::sendHeader("Location", $route);
-        exit;
+        parent::__construct("", ResponseType::MOVED_PERMANENTLY);
+        parent::addHeader("Location", $route);
     }
 }

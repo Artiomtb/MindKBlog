@@ -1,8 +1,14 @@
 <?php
 
+use Framework\DI\Service;
+
 $activeIfRoute = function ($item) use (&$route) {
     return $route['_name'] === $item?'class="active"':'';
 };
+$getRoute = function($route_name) {
+    return Service::get("router")->generateRoute($route_name);
+};
+$route = array("_name" => Service::get("router")->getMatched()["name"]);
 ?>
 <!DOCTYPE html>
 <html lang="en-us">

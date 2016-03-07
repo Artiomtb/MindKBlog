@@ -11,7 +11,11 @@ $getErrorBody = function ($field) use ($errors){
       return '<span class="glyphicon glyphicon-remove form-control-feedback"></span><span class="pull-right small form-error">'.$errors[$field].'</span>';
   }
     return '';
-}
+};
+
+$generateToken = function() {
+    echo "";
+};
 
 ?>
 

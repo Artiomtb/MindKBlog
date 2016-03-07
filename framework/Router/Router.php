@@ -3,6 +3,7 @@
 
 namespace Framework\Router;
 
+use Framework\DI\Service;
 use Framework\Logger\Logger;
 use Framework\Request\Request;
 
@@ -11,6 +12,8 @@ class Router
 
     private $config_array;
     private $request;
+
+    private $matched = null;
 
     private static $logger;
 
@@ -27,7 +30,7 @@ class Router
                 $config_array[$name]["pattern"] = $config["pattern"] . "/";
             }
         }
-        self::$logger = Logger::getLogger();
+        self::$logger = Service::get("logger");
         $this->config_array = $config_array;
     }
 
@@ -53,6 +56,7 @@ class Router
         //раскладываем uri в массив
         $parsedUri = explode("/", $uri);
 
+        $matched_name = null;
         $matched_config = null;
         $uri_variables = null;
 
@@ -69,6 +73,7 @@ class Router
             //если подходит - проверить, соблюдаются ли условия, описанные в _requirements. Если да - роут найден
             if (!is_null($uri_variables) && $this->checkRequirements($config, $uri_variables)) {
                 $matched_config = $config;
+                $matched_name = $name;
                 self::$logger->debug("Found config: " . $matched_config["pattern"]);
                 break;
             }
@@ -77,6 +82,10 @@ class Router
         //формируем результат работы роутера
         $result = array("route" => $matched_config,
             "params" => $uri_variables);
+
+        $this->matched["name"] = $matched_name;
+        $this->matched["config"] = $matched_config;
+
         return $result;
     }
 
@@ -181,4 +190,14 @@ class Router
         }
         return $result;
     }
+
+    /**
+     * @return null
+     */
+    public function getMatched()
+    {
+        return $this->matched;
+    }
+
+
 }
