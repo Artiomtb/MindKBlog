@@ -16,6 +16,7 @@ use Framework\Response\ResponseRedirect;
 class Controller
 {
     private $request;
+    private $session;
 
     private static $logger;
 
@@ -26,6 +27,7 @@ class Controller
     public function __construct($request = null)
     {
         $this->request = $request;
+        $this->session = Service::get("session");
         self::$logger = Service::get("logger");
     }
 
@@ -49,7 +51,7 @@ class Controller
 
                 //создаем и передаем в шаблон массив с сообщениями
                 $flush = array();
-                $mess = $this->request->get("redirectmessage");
+                $mess = $this->session->getAndRemove("flush");
                 if (isset($mess)) {
                     $flush["info"] = array($mess);
                 }

@@ -21,8 +21,10 @@ class ResponseRedirect extends Response
      */
     public function __construct($route, $message = "")
     {
-        $route = ($message == "") ? $route : $route . "?redirectmessage=" . $message;
         self::$logger = Service::get("logger");
+        if ($message !== "") {
+            Service::get("session")->set("flush", $message);
+        }
         self::$logger->debug("Redirecting to $route ...");
         parent::__construct("", ResponseType::MOVED_PERMANENTLY);
         parent::addHeader("Location", $route);
