@@ -33,6 +33,11 @@ class PostController extends Controller
                 $post->title   = $this->getRequest()->post('title');
                 $post->content = trim($this->getRequest()->post('content'));
                 $post->date    = $date->format('Y-m-d H:i:s');
+
+                if(!Service::get('security')->validateCSRFToken()) {
+                    die("Invalid CSRF token");
+                    //TODO replace with exception
+                }
                 $validator = new Validator($post);
                 if ($validator->isValid()) {
                     $post->save();

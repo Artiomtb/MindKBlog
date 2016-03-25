@@ -26,6 +26,10 @@ class SecurityController extends Controller
 
         if ($this->getRequest()->isPost()) {
 
+            if(!Service::get('security')->validateCSRFToken()) {
+                die("Invalid CSRF token");
+                //TODO replace with exception
+            }
             if ($user = User::findByEmail($this->getRequest()->post('email'))) {
                 if ($user->password == $this->getRequest()->post('password')) {
                     Service::get('security')->setUser($user);
@@ -55,6 +59,10 @@ class SecurityController extends Controller
         $errors = array();
 
         if ($this->getRequest()->isPost()) {
+            if(!Service::get('security')->validateCSRFToken()) {
+                die("Invalid CSRF token");
+                //TODO replace with exception
+            }
             try{
                 $user           = new User();
                 $user->email    = $this->getRequest()->post('email');
