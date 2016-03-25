@@ -1,3 +1,14 @@
+<?php
+use Framework\DI\Service;
+
+$getRoute = function ($route_name) {
+    return Service::get("router")->generateRoute($route_name);
+};
+$generateToken = function () {
+    echo "<input type=\"hidden\" name=\"csrf_token\" value=\"" .
+        Service::get("security")->createCSRFToken() . "\">";
+}
+?>
 <div class="container">
 
     <?php if (!isset($errors)) {

@@ -55,7 +55,8 @@ class Controller
                 if (isset($mess)) {
                     $flush["info"] = array($mess);
                 }
-                $response_with_layout = Renderer::render($layout_path, array("content" => $response, "flush" => $flush, "user" => null));
+                $user = Service::get("security")->getUser();
+                $response_with_layout = Renderer::render($layout_path, array("content" => $response, "flush" => $flush, "user" => $user));
                 $response = $response_with_layout;
             }
             return new Response($response);

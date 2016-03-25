@@ -1,4 +1,6 @@
-<?php if (!isset($errors)) {
+<?php use Framework\DI\Service;
+
+if (!isset($errors)) {
     $errors = array();
 }
 
@@ -13,9 +15,10 @@ $getErrorBody = function ($field) use ($errors){
     return '';
 };
 
-$generateToken = function() {
-    echo "";
-};
+$generateToken = function () {
+    echo "<input type=\"hidden\" name=\"csrf_token\" value=\"" .
+        Service::get("security")->createCSRFToken() . "\">";
+}
 
 ?>
 

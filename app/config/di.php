@@ -1,8 +1,6 @@
 <?php
 
 return array(
-
-    //TODO replace with correct class names
-    'security' => new stdClass(),
+    'security' => new \Framework\Security\Security(),
     'session' => new \Framework\Session\Session()
 );
